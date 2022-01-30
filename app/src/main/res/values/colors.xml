@@ -39,8 +39,9 @@
     <color name="transparent">#00FFFFFF</color>
 
 
-
-
+    <color name="main_bg">#ffffff</color>
+    <color name="txt0">#000000</color>
+    <color name="txt7">#777777</color>
 
     <color name="text_gray">#8D7A71</color>
     <color name="text_white">#FFFFFF</color>

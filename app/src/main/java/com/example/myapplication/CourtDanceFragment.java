@@ -122,17 +122,6 @@ public class CourtDanceFragment extends Fragment implements AdapterView.OnItemCl
             }
         });
 
-//        List<CourtDanceSpotVO> danceSpots = Arrays.asList(new CourtDanceSpotVO(),new CourtDanceSpotVO(),new CourtDanceSpotVO());
-//        for(int i=0; i<3; i++){
-//            Map map = new HashMap();
-//            map.put("dance_spot_img",images[i]);
-//            map.put("dance_spot_name", danceSpots.get(i).getName());
-//            map.put("team_desc", danceSpots.get(i).getTeamCount() == 0 ? "还没有舞队在此，快去创建吧!":String.format("%s支舞队",danceSpots.get(i).getTeamCount()));
-//            map.put("member_desc", String.format("%s个加入成员" , danceSpots.get(i).getMemberCount()));
-//            map.put("position_desc", danceSpots.get(i).getDetailDesc());
-//            map.put("distance_desc", String.format("距您%s千米",danceSpots.get(i).getDistance()));
-//            list.add(map);
-//        }
 
         return list;
     }
