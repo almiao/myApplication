@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.common;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 

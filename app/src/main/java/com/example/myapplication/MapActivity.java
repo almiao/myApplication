@@ -27,6 +27,7 @@ public class MapActivity extends AppCompatActivity {
     private BaiduMap mBaiduMap;
 
     private String[] tabs = {"找舞点", "找舞团"};
+
     private List<CourtDanceFragment> tabFragmentList = new ArrayList<>();
 
 
@@ -109,25 +110,28 @@ public class MapActivity extends AppCompatActivity {
         mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
         MapStatus.Builder builder = new MapStatus.Builder();
         builder.zoom(18.0f);
-        mBaiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-        mBaiduMap.setMyLocationEnabled(true);
 
-        //定义Maker坐标点
-        LatLng point = new LatLng(39.963175, 116.400244);
-//构建Marker图标
+//        //定义Maker坐标点
+//        LatLng point = new LatLng(39.963175, 116.400244);
+////构建Marker图标
         BitmapDescriptor bitmap = BitmapDescriptorFactory
                 .fromResource(R.drawable.icon_gcoding);
-//构建MarkerOption，用于在地图上添加Marker
-        OverlayOptions option = new MarkerOptions()
-                .position(point)
-                .icon(bitmap);
-//在地图上添加Marker，并显示
-        mBaiduMap.addOverlay(option);
+////构建MarkerOption，用于在地图上添加Marker
+//        OverlayOptions option = new MarkerOptions()
+//                .position(point)
+//                .icon(bitmap);
+////在地图上添加Marker，并显示
+//        mBaiduMap.addOverlay(option);
 
 
 
         //定义Maker坐标点
         LatLng point1 = new LatLng(39.944251, 116.494996);
+
+        builder.target(point1);
+        mBaiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+        mBaiduMap.setMyLocationEnabled(true);
+
 //构建Marker图标
         BitmapDescriptor bitmap1 = BitmapDescriptorFactory
                 .fromResource(R.drawable.control);
@@ -141,19 +145,19 @@ public class MapActivity extends AppCompatActivity {
                 .alpha(0.5f);
 //在地图上添加Marker，并显示
         mBaiduMap.addOverlay(option1);
-
-
-        //文字覆盖物位置坐标
-        LatLng llText = new LatLng(39.86923, 116.397428);
-
-//构建TextOptions对象
-        OverlayOptions mTextOptions = new TextOptions()
-                .text("百度地图SDK") //文字内容
-                .bgColor(0xAAFFFF00) //背景色
-                .fontSize(24) //字号
-                .fontColor(0xFFFF00FF) //文字颜色
-                .rotate(-30) //旋转角度
-                .position(llText);
+//
+//
+//        //文字覆盖物位置坐标
+//        LatLng llText = new LatLng(39.86923, 116.397428);
+//
+////构建TextOptions对象
+//        OverlayOptions mTextOptions = new TextOptions()
+//                .text("百度地图SDK") //文字内容
+//                .bgColor(0xAAFFFF00) //背景色
+//                .fontSize(24) //字号
+//                .fontColor(0xFFFF00FF) //文字颜色
+//                .rotate(-30) //旋转角度
+//                .position(llText);
 
     }
 

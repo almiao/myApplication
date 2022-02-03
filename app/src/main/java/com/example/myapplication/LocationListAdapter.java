@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.baidu.mapapi.search.core.PoiInfo;
+import com.example.myapplication.common.DistanceUtils;
 
 import java.util.ArrayList;
 import java.util.List;

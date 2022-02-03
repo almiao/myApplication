@@ -5,7 +5,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,8 +27,7 @@ import androidx.core.content.FileProvider;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.TimePickerView;
-import com.zxy.tiny.Tiny;
-import com.zxy.tiny.callback.FileWithBitmapCallback;
+import com.example.myapplication.common.DateUtils;
 import okhttp3.*;
 
 import java.io.File;
@@ -41,6 +42,7 @@ public class CreateCourtDanceGroupActivity extends AppCompatActivity implements 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_court_dance_group);
         setCustomActionBar();
+        img = findViewById(R.id.image);
 
         EditText claszId  = findViewById(R.id.group_create_time);
 
@@ -102,33 +104,29 @@ public class CreateCourtDanceGroupActivity extends AppCompatActivity implements 
     private static final int MY_ADD_CASE_CALL_PHONE = 6;
     //打开相册的请求码
     private static final int MY_ADD_CASE_CALL_PHONE2 = 7;
-    private AlertDialog.Builder builder;
     private AlertDialog dialog;
-    private LayoutInflater inflater;
-    private ImageView imageView;
-    private View layout;
-    private TextView takePhotoTV;
-    private TextView choosePhotoTV;
-    private TextView cancelTV;
+    private ImageView img;
+    Bitmap bitmap;
     /*
     初始化控件方法
      */
     public void viewInit() {
 
-        builder = new AlertDialog.Builder(this);//创建对话框
-        inflater = getLayoutInflater();
-        layout = inflater.inflate(R.layout.dialog_select_photo, null);//获取自定义布局
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);//创建对话框
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.dialog_select_photo, null);//获取自定义布局
         builder.setView(layout);//设置对话框的布局
         dialog = builder.create();//生成最终的对话框
         dialog.show();//显示对话框
 
-        takePhotoTV = layout.findViewById(R.id.photograph);
-        choosePhotoTV = layout.findViewById(R.id.photo);
-        cancelTV = layout.findViewById(R.id.cancel);
+        TextView takePhotoTV = layout.findViewById(R.id.photograph);
+        TextView choosePhotoTV = layout.findViewById(R.id.photo);
+        TextView cancelTV = layout.findViewById(R.id.cancel);
         //设置监听
         takePhotoTV.setOnClickListener(this);
         choosePhotoTV.setOnClickListener(this);
         cancelTV.setOnClickListener(this);
+
     }
 
     /**
@@ -202,8 +200,6 @@ public class CreateCourtDanceGroupActivity extends AppCompatActivity implements 
                 }
             } else {
                 Toast.makeText(this,"拒绝了你的请求",Toast.LENGTH_SHORT).show();
-                //"权限拒绝");
-                // TODO: 2018/12/4 这里可以给用户一个提示,请求权限被拒绝了
             }
         }
 
@@ -212,8 +208,6 @@ public class CreateCourtDanceGroupActivity extends AppCompatActivity implements 
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 choosePhoto();
             } else {
-                //"权限拒绝");
-                // TODO: 2018/12/4 这里可以给用户一个提示,请求权限被拒绝了
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -232,27 +226,37 @@ public class CreateCourtDanceGroupActivity extends AppCompatActivity implements 
 
             String state = Environment.getExternalStorageState();
             if (!state.equals(Environment.MEDIA_MOUNTED)) return;
-            // 把原图显示到界面上
-            Tiny.FileCompressOptions options = new Tiny.FileCompressOptions();
-            Tiny.getInstance().source(readpic()).asFile().withOptions(options).compress(new FileWithBitmapCallback() {
-                @Override
-                public void callback(boolean isSuccess, Bitmap bitmap, String outfile, Throwable t) {
-                    saveImageToServer(bitmap, outfile);//显示图片到imgView上
-                }
-            });
+
+            Uri uri = data.getData();
+            //通过URI获取图片绝对地址
+            String[] proj = { MediaStore.Images.Media.DATA };
+            Cursor cursor = managedQuery(uri,proj,null,null,null);
+            int actual_image_column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            //游标跳到首位，防止越界
+            cursor.moveToFirst();
+            String img_path = cursor.getString(actual_image_column_index);
+
+            bitmap = BitmapFactory.decodeFile(img_path);
+            //设置ImageView资源
+            img.setImageBitmap(bitmap);
         } else if (requestCode == 2 && resultCode == Activity.RESULT_OK
                 && null != data) {
             try {
-                Uri selectedImage = data.getData();//获取路径
-                Tiny.FileCompressOptions options = new Tiny.FileCompressOptions();
-                Tiny.getInstance().source(selectedImage).asFile().withOptions(options).compress(new FileWithBitmapCallback() {
-                    @Override
-                    public void callback(boolean isSuccess, Bitmap bitmap, String outfile, Throwable t) {
-                        saveImageToServer(bitmap, outfile);
-                    }
-                });
+                Uri uri = data.getData();//获取路径
+                String[] proj = { MediaStore.Images.Media.DATA };
+                Cursor cursor = managedQuery(uri,proj,null,null,null);
+                int actual_image_column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                //游标跳到首位，防止越界
+                cursor.moveToFirst();
+                String img_path = cursor.getString(actual_image_column_index);
+
+                bitmap = BitmapFactory.decodeFile(img_path);
+                //设置ImageView资源
+                img.setImageBitmap(bitmap);
+
             } catch (Exception e) {
                 //"上传失败");
+               e.printStackTrace();
             }
         }
     }
@@ -266,9 +270,10 @@ public class CreateCourtDanceGroupActivity extends AppCompatActivity implements 
     }
 
     private void saveImageToServer(final Bitmap bitmap, String outfile) {
-        File file = new File(outfile);
+
+
         // TODO: 2018/12/4  这里就可以将图片文件 file 上传到服务器,上传成功后可以将bitmap设置给你对应的图片展示
-        imageView.setImageBitmap(bitmap);
+        img.setImageBitmap(bitmap);
 
 
         imageUpLoad(outfile);

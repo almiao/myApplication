@@ -1,4 +1,4 @@
-package com.baiduseach.cn;
+package com.example.myapplication;
 
 /**
  * date:2021/4/28
